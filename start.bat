@@ -29,7 +29,7 @@ if not exist node_modules (
 echo ========================================
 echo   السيرفر يعمل — لا تغلق هذه النافذة
 echo   http://localhost:3000/edit-mode.html
-echo   PIN: 2025 | 100 ج.م | 01016380970
+echo   100 ج.م | 01016380970
 echo ========================================
 node server.js
 pause
