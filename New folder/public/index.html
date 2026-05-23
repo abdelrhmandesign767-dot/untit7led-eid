@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم | بوابة فودافون كاش الذكية</title>
+  <link rel="stylesheet" href="/public/style.css">
+</head>
+<body class="rtl">
+
+  <!-- Header -->
+  <header class="glass-panel">
+    <a href="/" class="logo">
+      <div class="logo-circle">VF</div>
+      <div class="logo-text">فودافون<span>كاش</span></div>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="btn-nav active">لوحة التحكم التاجر</a>
+      <a href="/checkout" class="btn-nav" target="_blank">صفحة دفع العميل ↗</a>
+    </div>
+  </header>
+
+  <!-- Container -->
+  <main class="container">
+    
+    <!-- Statistics Grid -->
+    <div class="stats-grid">
+      
+      <div class="stat-card glass-panel success">
+        <span class="stat-label">إجمالي الأرباح المستلمة</span>
+        <div class="stat-value" id="stat-revenue">0.00 ج.م</div>
+        <span class="stat-desc">للمعاملات المؤكدة تلقائياً أو يدوياً</span>
+      </div>
+
+      <div class="stat-card glass-panel info">
+        <span class="stat-label">الطلبات المؤكدة</span>
+        <div class="stat-value" id="stat-verified-orders">0</div>
+        <span class="stat-desc" id="stat-total-orders">إجمالي الطلبات المستلمة: 0</span>
+      </div>
+
+      <div class="stat-card glass-panel warning">
+        <span class="stat-label">طلبات بانتظار التأكيد</span>
+        <div class="stat-value" id="stat-pending-orders">0</div>
+        <span class="stat-desc">بانتظار وصول رسالة الـ SMS</span>
+      </div>
+
+      <div class="stat-card glass-panel">
+        <span class="stat-label">رسائل المعاملات SMS</span>
+        <div class="stat-value" id="stat-total-sms">0</div>
+        <span class="stat-desc" id="stat-unlinked-sms">الرسائل غير المربوطة: 0</span>
+      </div>
+
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="workspace-grid">
+      
+      <!-- Left Column: Orders Monitoring -->
+      <section class="orders-section">
+        <h2 class="column-title">
+          📋 طلبات العملاء الواردة
+          <span id="orders-count-badge">0</span>
+        </h2>
+        
+        <div class="list-container" id="orders-list">
+          <!-- Orders injected by JS -->
+          <div class="glass-panel" style="padding: 2rem; text-align: center; color: var(--text-secondary);">
+            جاري تحميل الطلبات...
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Settings & Simulator -->
+      <section class="side-section" style="display: flex; flex-direction: column; gap: 2rem;">
+        
+        <!-- Wallet Configuration Settings -->
+        <div class="glass-panel" style="padding: 1.5rem;">
+          <h3 class="column-title" style="margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+            ⚙️ إعدادات محفظتك
+          </h3>
+          <form id="wallet-settings-form" style="display: flex; gap: 10px; align-items: flex-end;">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+              <label for="wallet-number-input">رقم محفظة فودافون كاش الحالية:</label>
+              <input type="text" id="wallet-number-input" class="form-control" placeholder="مثال: 01012345678" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.25rem;">حفظ</button>
+          </form>
+        </div>
+
+        <!-- Testing SMS Simulator -->
+        <div class="glass-panel simulator-panel">
+          <div class="simulator-title">
+            <span>🧪 محاكي رسائل فودافون كاش</span>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            استخدم هذه الأداة لمحاكاة وصول رسالة SMS حقيقية من فودافون كاش لاختبار الربط التلقائي الفوري والتفاعلي مع طلبات العملاء.
+          </p>
+          
+          <form id="simulator-form">
+            <div class="form-group">
+              <label for="sim-amount">المبلغ المحول (ج.م):</label>
+              <input type="number" id="sim-amount" class="form-control" placeholder="مثال: 150" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="sim-phone">رقم محفظة العميل المرسل (11 رقم):</label>
+              <input type="text" id="sim-phone" class="form-control" placeholder="مثال: 01012345678" required minlength="11" maxlength="11">
+            </div>
+
+            <div class="form-group">
+              <label for="sim-trx">رقم العملية (اختياري - يتم توليده تلقائياً):</label>
+              <input type="text" id="sim-trx" class="form-control" placeholder="مثال: 4509127834">
+            </div>
+
+            <button type="submit" class="btn btn-secondary" style="width: 100%; border-color: var(--info); color: var(--info); background: rgba(59, 130, 246, 0.05);">
+              إرسال رسالة وهمية للسيرفر ⚡
+            </button>
+          </form>
+        </div>
+
+        <!-- SMS logs parsed -->
+        <div class="glass-panel" style="padding: 1.5rem; flex: 1;">
+          <h3 class="column-title" style="margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+            📨 سجل الرسائل المستلمة (SMS Logs)
+            <span id="sms-count-badge" style="background: rgba(59, 130, 246, 0.15); color: var(--info);">0</span>
+          </h3>
+          
+          <div class="list-container" id="sms-list" style="max-height: 300px;">
+            <!-- SMS Logs injected by JS -->
+            <div style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.9rem;">
+              لا توجد رسائل واردة بعد
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- Notification Container -->
+  <div id="notification-area"></div>
+
+  <!-- Scripts -->
+  <script src="/public/app.js"></script>
+</body>
+</html>

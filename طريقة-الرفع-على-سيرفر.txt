@@ -1,0 +1,84 @@
+═══════════════════════════════════════════════════════════
+  دليل الرفع الكامل — GitHub + Render + تطبيق SMS
+═══════════════════════════════════════════════════════════
+
+■ ما تم تظبيطه في المشروع
+─────────────────────────
+✓ إزالة وضع الاختبار (TEST_MODE) — دفع حقيقي فقط
+✓ التأكيد يعتمد على: المبلغ 100 ج.م + آخر 4 أرقام فقط
+✓ الاسم اختياري — خطأ في الاسم لا يوقف العملية
+✓ خطأ في آخر 4 أرقام = لا تأكيد
+✓ السيرفر يقبل SMS من تطبيق Enstone بصيغ JSON مختلفة
+
+■ الخطوة 1 — GitHub (مرة واحدة)
+────────────────────────────────
+1) ثبّت Git: https://git-scm.com
+2) ثبّت GitHub CLI: https://cli.github.com
+3) افتح CMD في مجلد untit7led-kit
+4) نفّذ: gh auth login  (وافق على GitHub)
+5) دبل كليك: رفع-على-جيت-هب.bat
+
+■ الخطوة 2 — Render (مرة واحدة)
+────────────────────────────────
+1) ادخل https://render.com (حسابك مربوط بـ GitHub)
+2) New → Web Service → اختر مستودع untit7led-eid
+3) الإعدادات:
+   • Name: untit7led-eid (أو أي اسم)
+   • Root Directory:  New folder
+   • Build Command:   npm install
+   • Start Command:   npm start
+   • Instance:        Free
+
+4) Environment Variables (Environment):
+   WALLET_NUMBER = 01016380970
+   PRODUCT_PRICE = 100
+
+5) Create Web Service — انتظر 3–5 دقائق
+
+6) احفظ الرابط: https://YOUR-NAME.onrender.com
+
+■ الخطوة 3 — تطبيق SMS على التلفون (Enstone)
+──────────────────────────────────────────────
+تطبيق: Auto forward SMS to PC / Phone
+
+1) اسمح للتطبيق بقراءة SMS + تشغيل في الخلفية
+2) Add filter / قاعدة جديدة:
+   • النوع: Incoming SMS
+   • المرسل: Vodafone  أو  VF-Cash  أو  * (الكل)
+   • محتوى (اختياري): تحويل  أو  كاش
+
+3) الإجراء: Forward to webserver — HTTP POST — JSON
+
+4) URL:
+   https://YOUR-NAME.onrender.com/webhook/sms
+
+5) Body (JSON) — جرّب أحد هذين:
+   {"from":"%from%","message":"%text%"}
+   أو
+   {"from":"%from%","text":"%text%"}
+
+6) Content-Type: application/json
+7) Save — فعّل القاعدة
+
+■ الخطوة 4 — اختبار حي
+──────────────────────
+1) افتح: https://YOUR-NAME.onrender.com/edit-mode.html
+2) PIN: 2025
+3) حوّل 100 ج.م فعلاً إلى 01016380970
+4) في الدفع: آخر 4 أرقام محفظتك اللي حوّلت منها (مهم!)
+5) الاسم أي حاجة أو اتركه فاضي
+6) ادفع وحمّل — بعد وصول SMS يظهر التحميل
+
+■ لو SMS متأخر
+──────────────
+• Render المجاني قد ينام — أول طلب يأخذ ~50 ثانية
+• لوحة التاجر: /dashboard → محاكي SMS للاختبار
+• موافقة يدوية من لوحة التاجر إذا لزم
+
+■ روابط مهمة بعد الرفع
+──────────────────────
+• التعديل:    /edit-mode.html
+• لوحة التاجر: /dashboard
+• Webhook SMS: /webhook/sms
+
+═══════════════════════════════════════════════════════════

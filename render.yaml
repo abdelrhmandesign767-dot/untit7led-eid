@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: untit7led-eid
+    runtime: node
+    rootDir: New folder
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    envVars:
+      - key: WALLET_NUMBER
+        value: "01016380970"
+      - key: PRODUCT_PRICE
+        value: "100"
+      - key: NODE_VERSION
+        value: "20"

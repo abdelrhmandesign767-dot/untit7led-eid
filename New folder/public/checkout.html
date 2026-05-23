@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>صفحة الدفع الآمن | فودافون كاش</title>
+  <link rel="stylesheet" href="/public/style.css">
+</head>
+<body class="rtl">
+
+  <!-- Header -->
+  <header class="glass-panel">
+    <a href="/" class="logo">
+      <div class="logo-circle">VF</div>
+      <div class="logo-text">فودافون<span>كاش</span></div>
+    </a>
+    <span style="font-size: 0.85rem; color: var(--text-secondary); background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 4px 12px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.2);">
+      🔒 اتصال آمن ومحمي
+    </span>
+  </header>
+
+  <!-- Container -->
+  <main class="container" style="display: flex; align-items: center; justify-content: center; min-height: 80vh;">
+    
+    <div class="glass-panel checkout-box" id="checkout-container">
+      
+      <div class="checkout-header">
+        <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">الدفع عبر Vodafone Cash 📱</h1>
+        <p style="font-size: 0.85rem; color: var(--text-secondary);">يرجى تحويل القيمة المطلوبة للمحفظة أدناه، ثم ملء نموذج التأكيد الفوري.</p>
+      </div>
+
+      <!-- Wallet details & click to copy -->
+      <div class="wallet-badge">
+        <span style="font-size: 0.8rem; color: var(--text-secondary);">قم بتحويل المبلغ إلى رقم المحفظة التالي:</span>
+        <div class="number" id="merchant-wallet-number">010XXXXXXXX</div>
+        <div class="copy-btn" id="copy-wallet-btn">نسخ الرقم 📋</div>
+      </div>
+
+      <!-- Instructions -->
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.8rem; line-height: 1.5; color: var(--text-secondary);">
+        <strong style="color: var(--text-primary);">💡 خطوات الدفع السريع:</strong>
+        <ol style="margin-right: 15px; margin-top: 5px;">
+          <li>قم بالتحويل عبر تطبيق Ana Vodafone أو بطلب الكود <code style="color:var(--primary-hover); font-weight:700;">*9*7*الرقم*المبلغ#</code></li>
+          <li>التقط لقطة شاشة (Screenshot) لرسالة التحويل أو إيصال التأكيد.</li>
+          <li>اكتب اسمك وقيمة التحويل وآخر 4 أرقام من محفظتك التي أرسلت منها.</li>
+          <li>ارفع لقطة الشاشة (اختيارية لتسريع التأكيد) ثم اضغط تأكيد.</li>
+        </ol>
+      </div>
+
+      <!-- Checkout Form -->
+      <form id="checkout-payment-form">
+        
+        <div class="form-group">
+          <label for="customer-name">الاسم بالكامل:</label>
+          <input type="text" id="customer-name" class="form-control" placeholder="اسمك الثنائي أو الثلاثي" required>
+        </div>
+
+        <div class="form-group">
+          <label for="amount">المبلغ المحول (ج.م):</label>
+          <input type="number" id="amount" class="form-control" placeholder="مثال: 150" required min="1">
+        </div>
+
+        <div class="form-group">
+          <label for="phone-last4">آخر 4 أرقام من محفظتك (المُرسِل):</label>
+          <input type="text" id="phone-last4" class="form-control" placeholder="مثال: 5678" required minlength="4" maxlength="4" pattern="\d{4}" title="يرجى إدخال 4 أرقام بالضبط">
+        </div>
+
+        <!-- Optional Screenshot Drop Area -->
+        <div class="form-group">
+          <label>لقطة شاشة إيصال التحويل (تكميلية ومساعدة):</label>
+          <div class="uploader-area" id="drop-area">
+            <div class="uploader-icon">📸</div>
+            <div class="uploader-text" id="uploader-prompt">
+              اضغط هنا لاختيار الصورة أو اسحبها هنا
+              <br><small style="color: var(--text-secondary);">يدعم التصوير المباشر بالكاميرا</small>
+            </div>
+            <img id="preview-img" alt="Preview">
+            <input type="file" id="screenshot-input" accept="image/*" style="display: none;">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.9rem;">
+          تأكيد وإتمام الدفع ⚡
+        </button>
+
+      </form>
+
+    </div>
+
+    <!-- Verification / Waiting status section -->
+    <div class="glass-panel checkout-box" id="verification-status-container" style="display: none; text-align: center; padding: 3rem 2rem;">
+      <div id="status-animation-icon" style="font-size: 4rem; margin-bottom: 1.5rem; animation: pulse 1.5s infinite;">⏳</div>
+      
+      <h2 id="status-main-title" style="font-size: 1.4rem; margin-bottom: 1rem;">جاري التحقق من عملية الدفع...</h2>
+      
+      <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: var(--radius-sm); border:1px solid var(--border-color); text-align: right; margin-bottom: 1.5rem;">
+        <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 0.85rem;">
+          <span style="color: var(--text-secondary);">كود العملية المرجعي:</span>
+          <strong id="display-order-id" style="color: var(--text-primary);">VC-00000</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 0.85rem;">
+          <span style="color: var(--text-secondary);">العميل:</span>
+          <strong id="display-customer-name" style="color: var(--text-primary);">-</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size: 0.85rem;">
+          <span style="color: var(--text-secondary);">قيمة المبلغ المحول:</span>
+          <strong id="display-amount" style="color: var(--primary-hover);">0.00 ج.م</strong>
+        </div>
+      </div>
+
+      <!-- Step-by-step verification progress logger -->
+      <div style="display: flex; flex-direction: column; gap: 12px; text-align: right; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 2rem;">
+        
+        <div style="display:flex; align-items:center; gap:10px;" id="step-upload">
+          <span class="status-dot" style="width:10px; height:10px; border-radius:50%; background:var(--success);"></span>
+          <span>تم تسجيل الطلب وتجهيز المعطيات بنجاح.</span>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px;" id="step-ocr">
+          <span class="status-dot" style="width:10px; height:10px; border-radius:50%; background:var(--warning);" id="dot-ocr"></span>
+          <span id="text-ocr">جاري تحليل لقطة الشاشة وتدقيق البيانات تلقائياً...</span>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px;" id="step-sms">
+          <span class="status-dot" style="width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,0.15);" id="dot-sms"></span>
+          <span id="text-sms">بانتظار وصول رسالة التحويل من شبكة المحمول...</span>
+        </div>
+
+      </div>
+
+      <div id="status-footer-actions">
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
+          يمكنك ترك هذه الصفحة مفتوحة، سيتم تحديث الطلب وتأكيده تلقائياً بمجرد إتمام التحقق.
+        </p>
+        <button class="btn btn-secondary" id="btn-back-checkout" style="padding: 0.5rem 1rem; font-size: 0.8rem;">تعديل البيانات ↩</button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Notification Container -->
+  <div id="notification-area"></div>
+
+  <!-- Keyframe CSS overrides for animation -->
+  <style>
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.8; }
+    }
+  </style>
+
+  <!-- Scripts -->
+  <script src="/public/checkout.js"></script>
+</body>
+</html>

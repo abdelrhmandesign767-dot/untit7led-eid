@@ -1,0 +1,12 @@
+# Dependencies
+New folder/node_modules/
+
+# Runtime data
+New folder/db.json
+New folder/uploads/
+New folder/.env
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+*.log

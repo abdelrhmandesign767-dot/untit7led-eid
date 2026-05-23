@@ -1,0 +1,22 @@
+{
+  "name": "vodafone-cash-smart-gateway",
+  "version": "1.0.0",
+  "description": "Smart and flexible Vodafone Cash payment gateway with SMS webhook parsing and OCR screenshot verification",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "tesseract.js": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "author": "Antigravity",
+  "license": "MIT"
+}
