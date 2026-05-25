@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const amount = amountInput.value.trim();
     const phoneLast4 = phoneLast4Input.value.trim();
-    const customerName = customerNameInput.value.trim();
+    const customerName = customerNameInput.value.trim() || 'عميل';
     const file = screenshotInput.files[0];
 
     const formData = new FormData();
