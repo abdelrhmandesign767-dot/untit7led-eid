@@ -11,5 +11,7 @@ services:
         value: "01016380970"
       - key: PRODUCT_PRICE
         value: "100"
+      - key: MIN_PAYMENT_AMOUNT
+        value: "90"
       - key: NODE_VERSION
         value: "20"

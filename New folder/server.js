@@ -10,6 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const WALLET_NUMBER = process.env.WALLET_NUMBER || '01016380970';
 const PRODUCT_PRICE = parseFloat(process.env.PRODUCT_PRICE || '100');
+const MIN_PAYMENT_AMOUNT = parseFloat(process.env.MIN_PAYMENT_AMOUNT || '90');
 const KIT_DIR = path.join(__dirname, '..');
 
 // Enable CORS and JSON parsing
@@ -56,6 +57,7 @@ const db = {
   data.settings = data.settings || {};
   data.settings.walletNumber = WALLET_NUMBER;
   data.settings.productPrice = PRODUCT_PRICE;
+  data.settings.minPaymentAmount = MIN_PAYMENT_AMOUNT;
   db.write(data);
 })();
 
@@ -64,14 +66,24 @@ function normalizeLast4(value) {
   return digits.length >= 4 ? digits.slice(-4) : digits;
 }
 
-function amountsMatch(a, b) {
-  if (a == null || b == null) return false;
-  return Math.abs(parseFloat(a) - parseFloat(b)) < 0.01;
+function amountAccepted(received) {
+  const r = parseFloat(received);
+  if (isNaN(r)) return false;
+  return r + 0.001 >= MIN_PAYMENT_AMOUNT;
+}
+
+function textHasAcceptedAmount(text) {
+  if (!text) return false;
+  const priceStr = String(Math.round(PRODUCT_PRICE));
+  const priceDec = PRODUCT_PRICE.toFixed(2);
+  if (text.includes(priceStr) || text.includes(priceDec)) return true;
+  const nums = text.match(/\d+(?:\.\d+)?/g) || [];
+  return nums.some((n) => amountAccepted(parseFloat(n)));
 }
 
 function smsMatchesOrder(sms, order) {
   if (!sms || !order || sms.isLinked) return false;
-  if (!amountsMatch(sms.amount, order.amount)) return false;
+  if (!amountAccepted(sms.amount)) return false;
   const smsLast4 = normalizeLast4(sms.senderLast4 || (sms.senderPhone || ''));
   const orderLast4 = normalizeLast4(order.phoneLast4);
   if (smsLast4.length !== 4 || orderLast4.length !== 4) return false;
@@ -264,6 +276,7 @@ app.get('/api/config', (req, res) => {
   res.status(200).json({
     success: true,
     price: PRODUCT_PRICE,
+    minPaymentAmount: MIN_PAYMENT_AMOUNT,
     walletNumber: WALLET_NUMBER,
     currency: 'EGP'
   });
@@ -404,11 +417,9 @@ async function runBackgroundOCR(orderId, imagePath, amount, last4) {
       // Advanced flexible scanning of the text
       let confidenceScore = 0;
 
-      // Rule A: Check if the amount is mentioned in the image
-      const amountStr = amount.toString();
-      const decimalStr = amount.toFixed(2);
-      if (cleanText.includes(amountStr) || cleanText.includes(decimalStr)) {
-        confidenceScore += 40; // High confidence if exact amount is found
+      // Rule A: accepted amount range (>= MIN_PAYMENT_AMOUNT)
+      if (textHasAcceptedAmount(cleanText)) {
+        confidenceScore += 40;
       }
 
       // Rule B: Check if the last 4 digits are mentioned in the image
@@ -433,7 +444,7 @@ async function runBackgroundOCR(orderId, imagePath, amount, last4) {
 
       order.ocrConfidence = confidenceScore;
       
-      const hasAmount = cleanText.includes(amountStr) || cleanText.includes(decimalStr);
+      const hasAmount = textHasAcceptedAmount(cleanText);
       const hasLast4 = cleanText.includes(last4);
       if (order.status === 'pending_sms' && hasAmount && hasLast4 && confidenceScore >= 70) {
         console.log(`[OCR Override] amount+last4 matched (${confidenceScore}%) order ${orderId}`);
@@ -595,7 +606,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Vodafone Cash Smart Gateway Running on Port ${PORT}`);
   console.log(`✏️  Edit Studio: http://localhost:${PORT}/edit-mode.html`);
   console.log(`💻 Admin Dashboard: http://localhost:${PORT}/dashboard`);
-  console.log(`💰 Price: ${PRODUCT_PRICE} EGP | Wallet: ${WALLET_NUMBER}`);
+  console.log(`💰 Price: ${PRODUCT_PRICE} EGP (min ${MIN_PAYMENT_AMOUNT}) | Wallet: ${WALLET_NUMBER}`);
   console.log(`🛍️ Customer Checkout: http://localhost:${PORT}/checkout`);
   console.log(`📱 SMS Webhook Endpoint: http://localhost:${PORT}/webhook/sms`);
   console.log(`=======================================================`);
