@@ -3,7 +3,6 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const Tesseract = require('tesseract.js');
 require('dotenv').config();
 
 const app = express();
@@ -20,6 +19,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(KIT_DIR));
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ ok: true, service: 'untit7led-eid' });
+});
 
 // Ensure uploads and database directories exist
 if (!fs.existsSync(path.join(__dirname, 'uploads'))) {
@@ -402,6 +405,7 @@ app.post('/api/orders/:id/consume', (req, res) => {
 async function runBackgroundOCR(orderId, imagePath, amount, last4) {
   console.log(`[OCR Start] Processing screenshot for Order ID: ${orderId}`);
   try {
+    const Tesseract = require('tesseract.js');
     const { data: { text } } = await Tesseract.recognize(imagePath, 'ara+eng');
     const cleanText = normalizeArabicNumbers(text);
     
@@ -601,9 +605,9 @@ app.get('/checkout', (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`=======================================================`);
-  console.log(`🚀 Vodafone Cash Smart Gateway Running on Port ${PORT}`);
+  console.log(`Vodafone Cash Smart Gateway Running on Port ${PORT}`);
   console.log(`✏️  Edit Studio: http://localhost:${PORT}/edit-mode.html`);
   console.log(`💻 Admin Dashboard: http://localhost:${PORT}/dashboard`);
   console.log(`💰 Price: ${PRODUCT_PRICE} EGP (min ${MIN_PAYMENT_AMOUNT}) | Wallet: ${WALLET_NUMBER}`);
