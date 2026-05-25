@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
 
-const app = express();
+console.log('[boot] starting payment server…');
 const PORT = process.env.PORT || 3000;
 const WALLET_NUMBER = process.env.WALLET_NUMBER || '01016380970';
 const PRODUCT_PRICE = parseFloat(process.env.PRODUCT_PRICE || '100');
